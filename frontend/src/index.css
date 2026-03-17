@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Sans:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────── */
+:root {
+  /* Background layers */
+  --bg-base:        #0A0A0F;
+  --bg-surface:     #111118;
+  --bg-elevated:    #1A1A24;
+  --bg-overlay:     #22222F;
+
+  /* Brand */
+  --accent-cyan:    #00D4FF;
+  --accent-cyan-dim:#0099BB;
+  --accent-amber:   #FFB347;
+  --accent-green:   #00E5A0;
+  --accent-red:     #FF4D6A;
+
+  /* Text */
+  --text-primary:   #F0F0F8;
+  --text-secondary: #8888AA;
+  --text-muted:     #44445A;
+
+  /* Borders */
+  --border-subtle:  #1E1E2E;
+  --border-default: #2A2A3E;
+  --border-accent:  #00D4FF33;
+
+  /* Fonts */
+  --font-display: 'Syne', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --font-body:    'Instrument Sans', sans-serif;
+
+  /* Shadows */
+  --shadow-glow-cyan:  0 0 40px #00D4FF18;
+  --shadow-glow-amber: 0 0 40px #FFB34718;
+  --shadow-card:       0 4px 24px #00000060;
+}
+
+/* ─── Base Reset ────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ─── Typography Utilities ──────────────────────── */
+.font-display { font-family: var(--font-display); }
+.font-mono    { font-family: var(--font-mono); }
+.font-body    { font-family: var(--font-body); }
+
+/* ─── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Selection ─────────────────────────────────── */
+::selection { background: #00D4FF22; color: var(--accent-cyan); }
+
+/* ─── Noise texture overlay (atmosphere) ───────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ─── Reusable Glow Border Card ─────────────────── */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-glow-cyan), var(--shadow-card);
+}
+
+/* ─── Gradient Text ─────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-amber {
+  background: linear-gradient(135deg, var(--accent-amber) 0%, var(--accent-red) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Cyan Glow Button ───────────────────────────── */
+.btn-primary {
+  background: var(--accent-cyan);
+  color: var(--bg-base);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  padding: 14px 32px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 24px #00D4FF44;
+  text-transform: uppercase;
+}
+.btn-primary:hover {
+  background: #22DDFF;
+  box-shadow: 0 0 40px #00D4FF88;
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+/* ─── Badge ─────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+.badge-cyan  { color: var(--accent-cyan);  background: #00D4FF11; border-color: #00D4FF33; }
+.badge-green { color: var(--accent-green); background: #00E5A011; border-color: #00E5A033; }
+.badge-amber { color: var(--accent-amber); background: #FFB34711; border-color: #FFB34733; }
+.badge-red   { color: var(--accent-red);   background: #FF4D6A11; border-color: #FF4D6A33; }
+
+/* ─── Page transition wrapper ───────────────────── */
+.page-enter {
+  animation: pageIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
