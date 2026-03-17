@@ -1,0 +1,171 @@
+# ==============================
+
+# Node.js / JavaScript
+
+# ==============================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package manager lock files (optional)
+
+# Uncomment if you don't want them tracked
+
+# package-lock.json
+
+# yarn.lock
+
+# pnpm-lock.yaml
+
+# ==============================
+
+# Environment Variables
+
+# ==============================
+
+.env
+.env.*
+!.env.example
+
+backend/.env
+frontend/.env
+
+# Secrets
+
+*.key
+*.pem
+*.crt
+
+# ==============================
+
+# Build / Production Output
+
+# ==============================
+
+dist/
+build/
+out/
+.next/
+.nuxt/
+coverage/
+
+# Vite
+
+vite.svg
+
+# React
+
+frontend/build/
+
+# ==============================
+
+# Logs
+
+# ==============================
+
+logs
+*.log
+
+# ==============================
+
+# OS Files
+
+# ==============================
+
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==============================
+
+# IDE / Editor
+
+# ==============================
+
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ==============================
+
+# Temporary Files
+
+# ==============================
+
+tmp/
+temp/
+*.tmp
+
+# ==============================
+
+# Testing
+
+# ==============================
+
+coverage/
+.nyc_output/
+
+# ==============================
+
+# Database / Local Dev
+
+# ==============================
+
+*.sqlite
+*.sqlite3
+*.db
+
+# ==============================
+
+# Uploads / Generated Files
+
+# ==============================
+
+uploads/
+generated/
+public/uploads/
+
+# ==============================
+
+# Cache
+
+# ==============================
+
+.cache/
+.parcel-cache/
+.eslintcache
+
+# ==============================
+
+# Docker
+
+# ==============================
+
+docker-compose.override.yml
+.env.docker
+
+# ==============================
+
+# Optional: AI / Model Outputs
+
+# ==============================
+
+models/
+ai-cache/
+
+# ==============================
+
+# Misc
+
+# ==============================
+
+*.tgz
+*.gz
+*.zip
