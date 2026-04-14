@@ -1,51 +1,105 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
   FileText, Zap, Target, TrendingUp, ArrowRight,
   CheckCircle, Brain, Shield, ChevronDown, Sparkles
 } from 'lucide-react'
 
-// ─── Floating Grid Background ────────────────────────────────────────────────
+/* ───────── GRID BACKGROUND ───────── */
 function GridBackground() {
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+    <div
+      className="fixed inset-0 overflow-hidden pointer-events-none"
+      style={{ zIndex: 0, background: '#05070d' }} // deeper dark base
+    >
       {/* Grid lines */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: `
-          linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)
-        `,
-        backgroundSize: '60px 60px',
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `
+            linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+        }}
+      />
 
       {/* Radial glow top-center */}
-      <div style={{
-        position: 'absolute', top: '-20%', left: '50%',
-        transform: 'translateX(-50%)',
-        width: '800px', height: '600px',
-        background: 'radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 70%)',
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          top: '-20%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '800px',
+          height: '600px',
+          background:
+            'radial-gradient(ellipse, rgba(0,255,255,0.12) 0%, transparent 70%)',
+          filter: 'blur(20px)',
+        }}
+      />
 
       {/* Radial glow bottom-right */}
-      <div style={{
-        position: 'absolute', bottom: '-10%', right: '-10%',
-        width: '600px', height: '600px',
-        background: 'radial-gradient(ellipse, rgba(0,229,160,0.05) 0%, transparent 70%)',
-      }} />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '-10%',
+          right: '-10%',
+          width: '600px',
+          height: '600px',
+          background:
+            'radial-gradient(ellipse, rgba(0,255,180,0.08) 0%, transparent 70%)',
+          filter: 'blur(20px)',
+        }}
+      />
 
-      {/* Horizontal scan line animation */}
+      {/* 🔥 Background scanning glow */}
       <motion.div
         style={{
-          position: 'absolute', left: 0, right: 0, height: '1px',
-          background: 'linear-gradient(90deg, transparent, rgba(0,212,255,0.15), transparent)',
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          height: '120px',
+          background:
+            'linear-gradient(180deg, transparent, rgba(0,255,255,0.08), transparent)',
+          filter: 'blur(25px)',
         }}
-        animate={{ top: ['0%', '100%'] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+        animate={{ top: ['-20%', '100%'] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+      />
+
+      {/* 🚀 Main scan line */}
+      <motion.div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          height: '2px',
+
+          background:
+            'linear-gradient(90deg, transparent, rgba(0,255,255,0.9), transparent)',
+
+          boxShadow: `
+            0 0 10px rgba(0,255,255,0.8),
+            0 0 25px rgba(0,255,255,0.6),
+            0 0 40px rgba(0,255,255,0.3)
+          `,
+
+          filter: 'blur(0.6px)',
+        }}
+        animate={{
+          top: ['0%', '100%'],
+          opacity: [0.4, 1, 0.4],
+        }}
+        transition={{
+          top: { duration: 5, repeat: Infinity, ease: 'linear' },
+          opacity: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+        }}
       />
     </div>
-  )
+  );
 }
 
 // ─── Animated Counter ─────────────────────────────────────────────────────────
@@ -90,7 +144,7 @@ function AnimatedStat({ value, suffix, label, delay }) {
       style={{ textAlign: 'center' }}
     >
       <div style={{
-        fontFamily: 'var(--font-mono)',
+        fontFamily: 'var(--font-display)',
         fontSize: 'clamp(2rem, 4vw, 3rem)',
         fontWeight: 700,
         color: 'var(--accent-cyan)',
@@ -143,7 +197,7 @@ function StepCard({ number, icon: Icon, title, desc, accent, delay }) {
       {/* Step number watermark */}
       <div style={{
         position: 'absolute', top: '16px', right: '20px',
-        fontFamily: 'var(--font-mono)',
+        fontFamily: 'var(--font-display)',
         fontSize: '4rem', fontWeight: 800,
         color: accent + '08',
         lineHeight: 1, userSelect: 'none',
@@ -196,11 +250,11 @@ function FeatureRow({ icon: Icon, title, desc, accent, index }) {
         padding: '24px',
         borderRadius: '16px',
         border: '1px solid transparent',
+        background: 'transparent',
         transition: 'all 0.3s ease',
         cursor: 'default',
       }}
       whileHover={{
-        backgroundColor: 'rgba(255,255,255,0.02)',
         borderColor: 'var(--border-default)',
       }}
     >
@@ -279,7 +333,7 @@ function ScorePreview() {
           boxShadow: '0 0 8px #00E5A0',
         }} />
         <span style={{
-          fontFamily: 'var(--font-mono)',
+          fontFamily: 'var(--font-display)',
           fontSize: '0.75rem',
           color: 'var(--text-secondary)',
           letterSpacing: '0.1em',
@@ -323,7 +377,7 @@ function ScorePreview() {
           }}>
             <motion.div
               style={{
-                fontFamily: 'var(--font-mono)',
+                fontFamily: 'var(--font-display)',
                 fontSize: '2.2rem', fontWeight: 700,
                 color: 'var(--accent-cyan)', lineHeight: 1,
               }}
@@ -360,7 +414,7 @@ function ScorePreview() {
                 {cat.label}
               </span>
               <span style={{
-                fontFamily: 'var(--font-mono)',
+                fontFamily: 'var(--font-display)',
                 fontSize: '0.8rem', color: cat.color,
               }}>
                 {cat.score}
@@ -487,6 +541,14 @@ export default function LandingPage() {
     },
   ]
 
+  const [menuOpen, setMenuOpen] = useState(false)
+  const navItems = [
+    { label: 'Home', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+    { label: 'How It Works', action: () => document.querySelector('#how-it-works')?.scrollIntoView({ behavior: 'smooth' }) },
+    { label: 'Features', action: () => document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' }) },
+    { label: 'Analyze', action: () => navigate('/analyse') },
+  ]
+
   return (
     <div style={{ position: 'relative', minHeight: '100vh', overflowX: 'hidden' }}>
       <GridBackground />
@@ -506,7 +568,11 @@ export default function LandingPage() {
           borderBottom: '1px solid var(--border-subtle)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div
+          onClick={() => navigate('/')}
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+          aria-label="Go to home"
+        >
           <div style={{
             width: '32px', height: '32px',
             background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-green))',
@@ -525,18 +591,110 @@ export default function LandingPage() {
           </span>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <button className="btn-ghost" style={{ padding: '10px 20px', fontSize: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="hidden md:flex" style={{ gap: '14px', alignItems: 'center' }}>
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => {
+                  item.action()
+                  setMenuOpen(false)
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-secondary)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  padding: '8px 10px',
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          <button className="btn-ghost hidden md:inline-flex" style={{ padding: '10px 20px', fontSize: '0.85rem' }}>
             Sign In
           </button>
+
           <button
             className="btn-primary"
             style={{ padding: '10px 22px', fontSize: '0.82rem' }}
-            onClick={() => navigate('/analyse')}
+            onClick={() => {
+              navigate('/analyse')
+              setMenuOpen(false)
+            }}
           >
             Analyse Resume
           </button>
+
+          <button
+            className="btn-ghost md:hidden"
+            aria-label="Toggle navigation menu"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            style={{ padding: '10px 12px', fontSize: '0.9rem' }}
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
         </div>
+
+        {menuOpen && (
+          <div
+            className="md:hidden"
+            style={{
+              position: 'absolute', top: '72px', right: '16px',
+              background: 'rgba(10,10,15,0.95)',
+              border: '1px solid var(--border-default)',
+              borderRadius: '14px',
+              padding: '12px',
+              width: 'calc(100% - 32px)',
+              maxWidth: '320px',
+              boxShadow: '0 10px 35px rgba(0,0,0,0.4)',
+              zIndex: 110,
+            }}
+          >
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => {
+                  item.action()
+                  setMenuOpen(false)
+                }}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-primary)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.95rem',
+                  padding: '10px 10px',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+            <button
+              onClick={() => {
+                navigate('/analyse')
+                setMenuOpen(false)
+              }}
+              style={{
+                width: '100%',
+                textAlign: 'center',
+                marginTop: '8px',
+                padding: '10px',
+              }}
+              className="btn-primary"
+            >
+              Analyse Resume
+            </button>
+          </div>
+        )}
       </motion.nav>
 
       {/* ── Hero Section ───────────────────────────────────── */}
@@ -697,7 +855,7 @@ export default function LandingPage() {
         }}
       >
         <span style={{
-          fontFamily: 'var(--font-mono)',
+          fontFamily: 'var(--font-display)',
           fontSize: '0.7rem', color: 'var(--text-muted)',
           letterSpacing: '0.15em', textTransform: 'uppercase',
         }}>
@@ -727,7 +885,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── How It Works ───────────────────────────────────── */}
-      <section style={{
+      <section id="how-it-works" style={{
         position: 'relative', zIndex: 10,
         padding: '120px 48px',
       }}>
@@ -778,7 +936,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features Section ───────────────────────────────── */}
-      <section style={{
+      <section id="features" style={{
         position: 'relative', zIndex: 10,
         padding: '120px 48px',
         background: 'var(--bg-surface)',
@@ -923,7 +1081,7 @@ export default function LandingPage() {
           </span>
         </div>
         <span style={{
-          fontFamily: 'var(--font-mono)',
+          fontFamily: 'var(--font-display)',
           fontSize: '0.75rem', color: 'var(--text-muted)',
         }}>
           Built with Node.js + LLaMA 3.1
