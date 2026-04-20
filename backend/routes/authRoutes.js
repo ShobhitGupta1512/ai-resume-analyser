@@ -1,15 +1,6 @@
 /**
  * routes/authRoutes.js
  * AI Resume Analyser — Full Auth with JWT + OTP
- *
- * POST /api/auth/register       → register → send verify OTP email
- * POST /api/auth/verify-email   → confirm OTP → issue tokens
- * POST /api/auth/resend-otp     → resend OTP
- * POST /api/auth/login          → password check → send 2FA OTP
- * POST /api/auth/verify-login   → confirm 2FA OTP → issue tokens
- * POST /api/auth/refresh        → new access token from refresh cookie
- * POST /api/auth/logout         → revoke refresh token + clear cookie
- * GET  /api/auth/me             → get current user (protected)
  */
 
 import express   from 'express'
@@ -32,6 +23,7 @@ import {
 
 const router = express.Router()
 
+// Rate limiters for security
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max:      10,
@@ -43,6 +35,8 @@ const otpLimiter = rateLimit({
   max:      3,
   message:  { success: false, error: 'Too many OTP requests. Wait 1 minute.' },
 })
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
 
 async function issueTokens(res, user, req) {
   const accessToken  = generateAccessToken(user._id, user.role)
@@ -81,6 +75,8 @@ async function validateOTP(user, plainOTP, purpose) {
   }
   return { valid: true }
 }
+
+// ── ROUTES ───────────────────────────────────────────────────────────────────
 
 // 1. REGISTER
 router.post('/register', authLimiter, async (req, res) => {
@@ -176,18 +172,24 @@ router.post('/login', authLimiter, async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ success: false, error: 'Email and password are required' })
 
-    const user = await User.findOne({ email: email.toLowerCase() })
+    // FIX: Added .select('+password') to retrieve the password for comparison
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password')
+    
     if (!user || !user.isActive)
       return res.status(401).json({ success: false, error: 'Invalid credentials' })
+    
     if (!user.password)
       return res.status(400).json({ success: false, error: 'This account uses social login.' })
 
     const match = await user.comparePassword(password)
     if (!match) return res.status(401).json({ success: false, error: 'Invalid credentials' })
+      
+    
     if (!user.isEmailVerified)
       return res.status(403).json({ success: false, error: 'Please verify your email first.', step: 'verify_email', email })
 
     const otp    = generateOTP()
+    
     const hashed = await hashOTP(otp)
     user.otp     = { code: hashed, expiresAt: new Date(Date.now() + 10 * 60 * 1000), purpose: 'login_2fa', attempts: 0 }
     await user.save()

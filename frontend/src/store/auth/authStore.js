@@ -15,16 +15,16 @@ import {
 const useAuthStore = create((set, get) => ({
   ...authState,
 
-  // Map the long action names to the short names used in your AuthModal
-  register:       registerUser(set), 
-  verifyEmail:    verifyEmailOTP(set, get),
-  login:          loginUser(set),
-  verifyLogin:    verifyLoginOTP(set, get),
-  resendOtp:      resendOtpAction(set),
-  logout:         logoutUser(set),
-  clearError:     clearError(set),
-  fetchUser:      fetchUser(set, get),
-  setToken:       setToken(set),
+  register:    registerUser(set),
+  // ✅ Wrap in arrow so get() is called at invocation time, not creation time
+  verifyEmail: (data) => verifyEmailOTP(set, get)(data),
+  login:       loginUser(set),
+  verifyLogin: (data) => verifyLoginOTP(set, get)(data),
+  resendOtp:   resendOtpAction(set),
+  logout:      logoutUser(set),
+  clearError:  clearError(set),
+  fetchUser:   (args) => fetchUser(set, get)(args),
+  setToken:    setToken(set),
 }));
 
 export default useAuthStore;
