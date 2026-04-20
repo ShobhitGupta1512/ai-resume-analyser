@@ -1,18 +1,53 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import LandingPage   from './pages/LandingPage'
-import AnalysisPage  from './pages/AnalysisPage'
-import DashboardPage from './pages/DashboardPage'
-import NotFound      from './pages/NotFound'
+import { useEffect } from "react"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-export default function App() {
+import useAuthStore from "./store/auth/authStore.js"
+import ProtectedRoute from "./components/ProtectedRoute"
+
+import LandingPage from "./pages/LandingPage"
+import DashboardPage from "./pages/DashboardPage"
+import AnalysisPage from "./pages/AnalysisPage"
+import NotFound from "./pages/NotFound"
+
+function App() {
+  const fetchUser = useAuthStore((state) => state.fetchUser)
+
+  useEffect(() => {
+    fetchUser() // 🔥 auto login on refresh
+  }, [])
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/"          element={<LandingPage />}   />
-        <Route path="/analyse"   element={<AnalysisPage />}  />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="*"          element={<NotFound />}      />
+
+        {/* Public */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* Protected */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/analysis"
+          element={
+            <ProtectedRoute>
+              <AnalysisPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
+
       </Routes>
     </BrowserRouter>
   )
 }
+
+export default App

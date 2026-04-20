@@ -1,92 +1,138 @@
-import axios from "axios"
+import axios from "axios";
 
-// ─── Base Axios Client ─────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// 🌐 Base Axios Client
+// ══════════════════════════════════════════════════════════════
 const api = axios.create({
-  baseURL: "/api", // Vite proxy → http://localhost:5000/api
-  timeout: 60000,  // 60s timeout for AI processing
-})
+  /**
+   * FIX: The guide specifies the backend runs on http://localhost:5000/api.
+   * If you are using a Vite proxy, "/api" is correct. 
+   * If NOT using a proxy, use "http://localhost:5000/api".
+   */
+  baseURL: "/api", 
+  timeout: 60000,   // 60s for AI processing
+  withCredentials: true, // Send httpOnly refresh-token cookie
+});
 
-// ─── Request Interceptor (Auth support) ────────────────────────
+// ══════════════════════════════════════════════════════════════
+// 🔒 Request Interceptor — Attach JWT Access Token
+// ══════════════════════════════════════════════════════════════
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token")
-
+    const token = localStorage.getItem("accessToken");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      config.headers.Authorization = `Bearer ${token}`; //
     }
-
-    return config
+    return config;
   },
   (error) => Promise.reject(error)
-)
+);
 
-// ─── Response Interceptor (Error normalization) ────────────────
+// ══════════════════════════════════════════════════════════════
+// ⚠️ Response Interceptor — Normalise Errors & Data
+// ══════════════════════════════════════════════════════════════
 api.interceptors.response.use(
-  (response) => response.data,
-
+  (response) => response.data, // Unwrap .data for cleaner components
   (error) => {
-
     if (!error.response) {
       return Promise.reject({
-        message: "Cannot reach server. Make sure backend is running.",
-        status: 0
-      })
+        message: "Cannot reach server. Make sure the backend is running.",
+        status: 0,
+      });
     }
 
     const message =
       error.response.data?.message ||
       error.response.data?.error ||
-      error.message ||
-      "Something went wrong"
+      "Something went wrong.";
 
-    const status = error.response.status
-
-    return Promise.reject({ message, status })
+    const status = error.response.status;
+    return Promise.reject({ message, status });
   }
-)
+);
 
-
-// ─── API METHODS ──────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// 📄 RESUME ROUTES
+// ══════════════════════════════════════════════════════════════
 
 /**
  * POST /api/upload
- * Upload resume and optionally job description
+ * IMPORTANT: The guide states the key must be exactly "resume".
  */
 export async function uploadResume(file, jobDescription = "") {
+  const form = new FormData();
 
-  const form = new FormData()
-  form.append("resume", file)
+  // FIX: Field key must be "resume" according to Common Errors section.
+  form.append("resume", file); 
 
   if (jobDescription.trim()) {
-    form.append("jobDescription", jobDescription.trim())
+    // Standardized key for JD
+    form.append("jobDescription", jobDescription.trim());
   }
 
-  return api.post("/upload", form)
+  return api.post("/upload", form, {
+    headers: { "Content-Type": "multipart/form-data" }, //
+  });
 }
 
-
-/**
- * POST /api/match
- * Compare resume text with job description
- */
-export async function matchJob(resumeText, jobDescription) {
-
-  return api.post("/match", {
-    resumeText,
-    jobDescription
-  })
+export async function matchJob(data) {
+  return api.post("/match", data); //
 }
 
-
-/**
- * POST /api/feedback
- * Generate AI feedback
- */
-export async function getFeedback(resumeText) {
-
-  return api.post("/feedback", {
-    resumeText
-  })
+export async function getFeedback(data) {
+  return api.post("/feedback", data); //
 }
 
-export default api
+export async function getHistory() {
+  return api.get("/history"); //
+}
+
+export async function deleteHistory(id) {
+  return api.delete(`/history/${id}`); //
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🔐 AUTH ROUTES
+// ══════════════════════════════════════════════════════════════
+
+export async function register(data) {
+  return api.post("/auth/register", data); //
+}
+
+export async function verifyEmail(data) {
+  return api.post("/auth/verify-email", data); //
+}
+
+export async function resendOtp(data) {
+  return api.post("/auth/resend-otp", data); //
+}
+
+export async function login(data) {
+  return api.post("/auth/login", data); //
+}
+
+export async function verifyLogin(data) {
+  return api.post("/auth/verify-login", data); //
+}
+
+export async function refreshToken() {
+  return api.post("/auth/refresh"); //
+}
+
+export async function logout() {
+  return api.post("/auth/logout"); //
+}
+
+export async function getMe() {
+  return api.get("/auth/me"); //
+}
+
+// ══════════════════════════════════════════════════════════════
+// 🛠️ UTILITY ROUTES
+// ══════════════════════════════════════════════════════════════
+
+export async function healthCheck() {
+  return api.get("/health"); //
+}
+
+export default api;
